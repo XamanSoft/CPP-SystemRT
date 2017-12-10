@@ -2,8 +2,10 @@
 #define _SRC_STDAFX_H
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <time.h>
 
 #ifdef _WIN32
@@ -18,6 +20,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
+#include <signal.h>
 #include <syslog.h>
 #include <string.h>
 #endif

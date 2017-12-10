@@ -1,4 +1,3 @@
-#include "../stdafx.h"
 #include <CppSystemRT.hpp>
 
 namespace CppSystemRT {

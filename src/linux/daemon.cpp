@@ -1,15 +1,23 @@
-#include "../stdafx.h"
 #include <CppSystemRT.hpp>
 
 namespace CppSystemRT {
 	
-bool running{false};
-void DaemonProcess();
+static int pid_fd{-1};	
+static char *pid_file_name{NULL};
+static bool running{false};
+
+static void DaemonProcess();
+
+void DaemonHandleSignal(int sig);
 
 int DaemonEntry() {
 	// Process ID and Session ID
 	pid_t pid, sid;
 	int fd;
+	
+	/* Daemon will handle two signals */
+	signal(SIGINT, DaemonHandleSignal);
+	signal(SIGHUP, DaemonHandleSignal);
 
 	// Forking the parent process
 	// fork return the process id of the child process
@@ -57,6 +65,30 @@ void DaemonProcess() {
 		sleep(1);
 	}
 
+}
+
+void DaemonHandleSignal(int sig)
+{
+	if (sig == SIGINT) {
+		//fprintf(log_stream, "Debug: stopping daemon ...\n");
+		/* Unlock and close lockfile */
+		if (pid_fd != -1) {
+			lockf(pid_fd, F_ULOCK, 0);
+			close(pid_fd);
+		}
+		/* Try to delete lockfile */
+		if (pid_file_name != NULL) {
+			unlink(pid_file_name);
+		}
+		running = 0;
+		/* Reset signal handling to default behavior */
+		signal(SIGINT, SIG_DFL);
+	} else if (sig == SIGHUP) {
+		//fprintf(log_stream, "Debug: reloading daemon config file ...\n");
+		//read_conf_file(1);
+	} else if (sig == SIGCHLD) {
+		//fprintf(log_stream, "Debug: received SIGCHLD signal\n");
+	}
 }
 
 }

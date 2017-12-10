@@ -104,6 +104,8 @@
 			'type': 'static_library',
 			'sources': [
 				'src/<(OS)/daemon.cpp',
+				'src/<(OS)/log.cpp',
+				'src/log-common.cpp',
 			],
 		},
 	],
