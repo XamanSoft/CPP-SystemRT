@@ -1,0 +1,11 @@
+.DS_Store
+npm-debug.log
+node_modules
+build
+*.vcxproj
+*.vcxproj.filters
+*.vcproj
+*.vcproj.filters
+*.sln
+Debug
+Release
