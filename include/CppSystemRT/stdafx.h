@@ -7,6 +7,9 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <thread>
+#include <utility>
+#include <vector>
 #include <time.h>
 
 #ifdef _WIN32

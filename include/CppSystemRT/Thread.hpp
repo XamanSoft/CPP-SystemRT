@@ -5,11 +5,20 @@ namespace CppSystemRT {
 	
 class Thread {
 public:
-	virtual ~Thread() {};
+	Thread();
+	virtual ~Thread() {}
 
+	virtual void start();
+	virtual void stop();
 	virtual int exec() =0;
+
+private:
+	static void run(Thread *thread);
+
+	bool running;
+	std::thread* thread;
 };
-	
+
 }
 
 #endif

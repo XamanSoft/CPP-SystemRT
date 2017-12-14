@@ -90,6 +90,9 @@
 			'conditions': [
 				['OS == "win"', {
 					'libraries': ['-ladvapi32.lib'],
+				}],
+				['OS == "linux"', {
+					'libraries': ['-lpthread'],
 				}]
 			],
 			"dependencies": [
@@ -106,6 +109,7 @@
 				'src/<(OS)/daemon.cpp',
 				'src/<(OS)/log.cpp',
 				'src/log-common.cpp',
+				'src/thread.cpp',
 			],
 		},
 	],
