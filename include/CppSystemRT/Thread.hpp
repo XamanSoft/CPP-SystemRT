@@ -7,7 +7,7 @@ class Thread {
 public:
 	virtual ~Thread() {};
 
-	virtual void run() =0;
+	virtual int exec() =0;
 };
 	
 }

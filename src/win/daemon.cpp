@@ -1,26 +1,32 @@
 #include <CppSystemRT.hpp>
 
 namespace CppSystemRT {
+
+namespace Daemon {
 	
 /// structure contains status information for a service
-SERVICE_STATUS        g_ServiceStatus = { 0 };
+static SERVICE_STATUS        g_ServiceStatus = { 0 };
 /// handle to the status information structure for the current service.
-SERVICE_STATUS_HANDLE g_StatusHandle = NULL;
+static SERVICE_STATUS_HANDLE g_StatusHandle = NULL;
 /// handle for a stop event
-HANDLE                g_ServiceStopEvent = INVALID_HANDLE_VALUE;
+static HANDLE                g_ServiceStopEvent = INVALID_HANDLE_VALUE;
+
+thread_create_t threadCreate{nullptr};
 
 #define SERVICE_NAME  _T("LoggerWindowsService")  
 
-VOID WINAPI ServiceDaemonMain(DWORD argc, LPTSTR *argv);
-VOID WINAPI ServiceDaemonCtrlHandler(DWORD);
-DWORD WINAPI ServiceDaemonWorkerThread(LPVOID lpParam);
+static VOID WINAPI ServiceDaemonMain(DWORD argc, LPTSTR *argv);
+static VOID WINAPI ServiceDaemonCtrlHandler(DWORD);
+static DWORD WINAPI ServiceDaemonWorkerThread(LPVOID lpParam);
 
-int DaemonEntry() {
+int exec(thread_create_t thread_create) {
 	SERVICE_TABLE_ENTRY ServiceDaemonTable[] =
 	{
 		{ SERVICE_NAME, (LPSERVICE_MAIN_FUNCTION)ServiceDaemonMain },
 		{ NULL, NULL }
 	};
+	
+	threadCreate = thread_create;
 
 	if (StartServiceCtrlDispatcher(ServiceDaemonTable) == FALSE)
 	{
@@ -71,7 +77,7 @@ VOID WINAPI ServiceDaemonMain(DWORD argc, LPTSTR *argv)
 	SetServiceStatus(g_StatusHandle, &g_ServiceStatus);
 
 	/// Starting the  worker thread
-	HANDLE hThread = CreateThread(NULL, 0, ServiceDaemonWorkerThread, NULL, 0, NULL);
+	HANDLE hThread = CreateThread(NULL, 0, ServiceDaemonWorkerThread, (LPVOID)threadCreate, 0, NULL);
 
 	// Waiting for worker thread exit signal
 	WaitForSingleObject(hThread, INFINITE);
@@ -121,16 +127,20 @@ VOID WINAPI ServiceDaemonCtrlHandler(DWORD CtrlCode)
 /// ServiceWorkerThread function starts writing the timestamp to a file every 3 seconds
 DWORD WINAPI ServiceDaemonWorkerThread(LPVOID lpParam)
 {
-	//DaemonWorker worker;
+	std::unique_ptr<Thread> worker(static_cast<thread_create_t>(lpParam)());
 
 	///  Checking if the services has issued a stop request
 	while (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0)
 	{
-		//worker.run();
+		if (!worker || worker->exec())
+			break;
+
 		Sleep(1000);
 	}
 
 	return ERROR_SUCCESS;
+}
+
 }
 
 }

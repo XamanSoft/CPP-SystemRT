@@ -2,22 +2,24 @@
 
 namespace CppSystemRT {
 	
+namespace Daemon {
+
 static int pid_fd{-1};	
 static char *pid_file_name{NULL};
 static bool running{false};
 
-static void DaemonProcess();
+void process(thread_create_t thread_create);
 
-void DaemonHandleSignal(int sig);
+void _handleSignal(int sig);
 
-int DaemonEntry() {
+int exec(thread_create_t thread_create) {
 	// Process ID and Session ID
 	pid_t pid, sid;
 	int fd;
 	
 	/* Daemon will handle two signals */
-	signal(SIGINT, DaemonHandleSignal);
-	signal(SIGHUP, DaemonHandleSignal);
+	signal(SIGINT, _handleSignal);
+	signal(SIGHUP, _handleSignal);
 
 	// Forking the parent process
 	// fork return the process id of the child process
@@ -52,22 +54,24 @@ int DaemonEntry() {
 	stderr = fopen("/dev/null", "w+");
 
 	// calling process function
-	DaemonProcess();
+	process(thread_create);
 
 	return EXIT_SUCCESS;
 }
 
-void DaemonProcess() {
-	//Thread worker;
+void process(thread_create_t thread_create) {
+	std::unique_ptr<Thread> worker(thread_create());
 
 	while (running) {
-		//worker.run();
+		if (!worker || worker->exec())
+			break;
+
 		sleep(1);
 	}
-
 }
 
-void DaemonHandleSignal(int sig)
+
+void _handleSignal(int sig)
 {
 	if (sig == SIGINT) {
 		//fprintf(log_stream, "Debug: stopping daemon ...\n");
@@ -89,6 +93,8 @@ void DaemonHandleSignal(int sig)
 	} else if (sig == SIGCHLD) {
 		//fprintf(log_stream, "Debug: received SIGCHLD signal\n");
 	}
+}
+
 }
 
 }

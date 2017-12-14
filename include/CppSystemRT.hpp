@@ -3,7 +3,8 @@
 
 #include "CppSystemRT/stdafx.h"
 
-#include "CppSystemRT/Daemon.hpp"
 #include "CppSystemRT/Log.hpp"
+#include "CppSystemRT/Thread.hpp"
+#include "CppSystemRT/Daemon.hpp"
 
 #endif

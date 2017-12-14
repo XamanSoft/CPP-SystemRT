@@ -6,16 +6,20 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <string>
 #include <time.h>
 
 #ifdef _WIN32
 #include <tchar.h>
-#include <string>
 #include <Windows.h>
+#include <winsock.h>
 #elif __linux__
 #include <pthread.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
+#include <netinet/in.h>
+#include <netdb.h> 
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
