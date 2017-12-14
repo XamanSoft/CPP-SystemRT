@@ -15,8 +15,11 @@ void Thread::stop() {
 }
 
 void Thread::run(Thread *thread) {
-	while (thread->running) {
-		thread->exec();
+	while (thread && thread->running) {
+		if (thread->exec()) {
+			running = false;
+			break;
+		}
 		
 #ifdef _WIN32
 		Sleep(1000);
@@ -26,6 +29,7 @@ void Thread::run(Thread *thread) {
 	}
 	
 	delete thread->thread;
+	thread->thread = nullptr;
 }
 
 }
