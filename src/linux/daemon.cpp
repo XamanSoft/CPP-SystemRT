@@ -62,10 +62,8 @@ int exec(thread_create_t thread_create) {
 void process(thread_create_t thread_create) {
 	std::unique_ptr<Thread> worker(thread_create());
 
-	while (running) {
-		if (!worker || worker->exec())
-			break;
-
+	while (worker && running) {		
+		worker->run();
 		sleep(1);
 	}
 }
@@ -84,7 +82,7 @@ void _handleSignal(int sig)
 		if (pid_file_name != NULL) {
 			unlink(pid_file_name);
 		}
-		running = 0;
+		running = false;
 		/* Reset signal handling to default behavior */
 		signal(SIGINT, SIG_DFL);
 	} else if (sig == SIGHUP) {

@@ -130,11 +130,9 @@ DWORD WINAPI ServiceDaemonWorkerThread(LPVOID lpParam)
 	std::unique_ptr<Thread> worker(static_cast<thread_create_t>(lpParam)());
 
 	///  Checking if the services has issued a stop request
-	while (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0)
+	while (worker && (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0))
 	{
-		if (!worker || worker->exec())
-			break;
-
+		worker->run();
 		Sleep(1000);
 	}
 

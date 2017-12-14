@@ -2,39 +2,45 @@
 
 namespace CppSystemRT {
 	
-Thread::Thread(): running(false), retCode(0), thread(nullptr) {
+Thread::Thread(): running(false), retCode(0) {
 }
 
-void Thread::start() {
-	if (running) return;
+Thread::~Thread() {}
+
+int Thread::exec(bool waitFinish) {
+	if (running) return -1;
+
+	retCode = 0;
 	running = true;
-	thread = new std::thread(run,this);
-}
-
-void Thread::stop() {
-	running = false;
-}
-
-int Thread::exitCode() {
+	thread.reset(new std::thread(thread_run,this));
+	
+	if (waitFinish && thread->joinable())
+	{
+		thread->join();
+	}
+	
 	return retCode;
 }
 
-void Thread::run(Thread *thread) {
-	while (thread && thread->running) {
-		if (thread->retCode = thread->exec()) {
-			thread->running = false;
-			break;
-		}
-		
-#ifdef _WIN32
-		Sleep(1000);
-#else
-		sleep(1);
-#endif
+int Thread::wait() {
+	if (thread->joinable())
+	{
+		thread->join();
 	}
-	
-	delete thread->thread;
-	thread->thread = nullptr;
+
+	return retCode;
+}
+
+void Thread::exit(int code) {
+	retCode = code;
+	running = false;
+}
+
+void Thread::thread_run(Thread *thread) {
+	while (thread && thread->running) {
+		thread->run();
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	}
 }
 
 }

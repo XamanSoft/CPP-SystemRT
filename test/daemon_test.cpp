@@ -4,8 +4,8 @@ using namespace CppSystemRT;
 
 class DaemonThread: public Thread {
 public:
-	int exec() {
-		return 0;
+	void run() {
+		// Daemon code
 	}
 };
 

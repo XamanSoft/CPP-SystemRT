@@ -6,19 +6,19 @@ namespace CppSystemRT {
 class Thread {
 public:
 	Thread();
-	virtual ~Thread() {}
+	virtual ~Thread();
 
-	virtual void start();
-	virtual void stop();
-	virtual int exec() =0;
-	virtual int exitCode();
+	virtual int exec(bool waitFinish = false);
+	virtual int wait();
+	virtual void exit(int code);
+	virtual void run() =0;
 
 private:
-	static void run(Thread *thread);
+	static void thread_run(Thread *thread);
 
 	std::atomic<bool> running;
 	std::atomic<int> retCode;
-	std::atomic<std::thread*> thread;
+	std::unique_ptr<std::thread> thread;
 };
 
 }

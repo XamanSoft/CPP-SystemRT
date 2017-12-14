@@ -103,6 +103,24 @@
 			],
 		},
 		{
+			'target_name': 'thread-test',
+			'type': 'executable',
+			'conditions': [
+				['OS == "win"', {
+					'libraries': ['-ladvapi32.lib'],
+				}],
+				['OS == "linux"', {
+					'libraries': ['-lpthread'],
+				}]
+			],
+			"dependencies": [
+				"CPP-SystemRT-lib"
+			],
+			'sources': [
+				'test/thread_test.cpp'
+			],
+		},
+		{
 			'target_name': 'CPP-SystemRT-lib',
 			'type': 'static_library',
 			'sources': [
