@@ -2,10 +2,11 @@
 
 namespace CppSystemRT {
 	
-Thread::Thread(): running(false), thread(nullptr) {
+Thread::Thread(): running(false), retCode(0), thread(nullptr) {
 }
 
 void Thread::start() {
+	if (running) return;
 	running = true;
 	thread = new std::thread(run,this);
 }
@@ -14,10 +15,14 @@ void Thread::stop() {
 	running = false;
 }
 
+int Thread::exitCode() {
+	return retCode;
+}
+
 void Thread::run(Thread *thread) {
 	while (thread && thread->running) {
-		if (thread->exec()) {
-			running = false;
+		if (thread->retCode = thread->exec()) {
+			thread->running = false;
 			break;
 		}
 		

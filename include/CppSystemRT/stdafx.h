@@ -10,6 +10,7 @@
 #include <thread>
 #include <utility>
 #include <vector>
+#include <atomic>
 #include <time.h>
 
 #ifdef _WIN32

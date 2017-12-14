@@ -11,12 +11,14 @@ public:
 	virtual void start();
 	virtual void stop();
 	virtual int exec() =0;
+	virtual int exitCode();
 
 private:
 	static void run(Thread *thread);
 
-	bool running;
-	std::thread* thread;
+	std::atomic<bool> running;
+	std::atomic<int> retCode;
+	std::atomic<std::thread*> thread;
 };
 
 }
