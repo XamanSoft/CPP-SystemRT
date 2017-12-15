@@ -157,11 +157,30 @@
 			],
 		},
 		{
+			'target_name': 'namedpipe-test',
+			'type': 'executable',
+			'conditions': [
+				['OS == "win"', {
+					'libraries': ['-ladvapi32.lib'],
+				}],
+				['OS == "linux"', {
+					'libraries': ['-lpthread'],
+				}]
+			],
+			"dependencies": [
+				"CPP-SystemRT-lib"
+			],
+			'sources': [
+				'test/namedpipe_test.cpp'
+			],
+		},
+		{
 			'target_name': 'CPP-SystemRT-lib',
 			'type': 'static_library',
 			'sources': [
 				'src/<(OS)/daemon.cpp',
 				'src/<(OS)/log.cpp',
+				'src/<(OS)/namedpipe.cpp',
 				'src/log-common.cpp',
 				'src/thread.cpp',
 				'src/socket.cpp',
