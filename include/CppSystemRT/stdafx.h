@@ -12,12 +12,14 @@
 #include <utility>
 #include <vector>
 #include <atomic>
+#include <regex>
 #include <time.h>
 
 #ifdef _WIN32
 #include <tchar.h>
 #include <Windows.h>
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #elif __linux__
 #include <pthread.h>
 #include <sys/types.h>

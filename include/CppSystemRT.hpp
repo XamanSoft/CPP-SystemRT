@@ -5,6 +5,7 @@
 
 #include "CppSystemRT/Log.hpp"
 #include "CppSystemRT/Thread.hpp"
+#include "CppSystemRT/Socket.hpp"
 #include "CppSystemRT/Daemon.hpp"
 
 #endif

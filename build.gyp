@@ -121,6 +121,24 @@
 			],
 		},
 		{
+			'target_name': 'socket-server-test',
+			'type': 'executable',
+			'conditions': [
+				['OS == "win"', {
+					'libraries': ['-ladvapi32.lib', '-lws2_32.lib'],
+				}],
+				['OS == "linux"', {
+					'libraries': ['-lpthread'],
+				}]
+			],
+			"dependencies": [
+				"CPP-SystemRT-lib"
+			],
+			'sources': [
+				'test/socket_server_test.cpp'
+			],
+		},
+		{
 			'target_name': 'CPP-SystemRT-lib',
 			'type': 'static_library',
 			'sources': [
@@ -128,6 +146,7 @@
 				'src/<(OS)/log.cpp',
 				'src/log-common.cpp',
 				'src/thread.cpp',
+				'src/socket.cpp',
 			],
 		},
 	],
