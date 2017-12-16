@@ -1,6 +1,6 @@
 # CPP-SystemRT
 
-The aim of this project is to create a Multiplataform System Runtime Library for Windows and Linux in C++.
+The aim of this project is to create a Multiplatform System Runtime Library for Windows and Linux in C++.
 
 ## Library Support
 
