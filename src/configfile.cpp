@@ -137,7 +137,7 @@ std::string ConfigFile::parseName() {
 std::string ConfigFile::parseValue() {
 	std::string value;
 	
-	while (file && file.peek() != '\n')
+	while (file.good() && file.peek() != '\n')
 		value += file.get();
 	line++;
 	file.ignore(1); // remove \n
@@ -148,7 +148,7 @@ std::string ConfigFile::parseValue() {
 void ConfigFile::skipWS(bool skipNewLine) {
 	int inputChar;
 	
-	while (file && std::isspace(inputChar = file.peek())) {
+	while (file.good() && std::isspace(inputChar = file.peek())) {
 		if (inputChar == '\n') {
 			if (skipNewLine)
 				line++;
