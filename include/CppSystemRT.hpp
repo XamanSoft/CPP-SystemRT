@@ -3,6 +3,7 @@
 
 #include "CppSystemRT/stdafx.h"
 
+#include "CppSystemRT/ConfigFile.hpp"
 #include "CppSystemRT/Log.hpp"
 #include "CppSystemRT/Thread.hpp"
 #include "CppSystemRT/Socket.hpp"

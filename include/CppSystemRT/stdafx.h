@@ -11,6 +11,10 @@
 #include <chrono>
 #include <utility>
 #include <vector>
+#include <map>
+#include <sstream>
+#include <cctype>
+#include <limits>
 #include <atomic>
 #include <regex>
 #include <time.h>

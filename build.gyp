@@ -175,6 +175,24 @@
 			],
 		},
 		{
+			'target_name': 'configfile-test',
+			'type': 'executable',
+			'conditions': [
+				['OS == "win"', {
+					'libraries': ['-ladvapi32.lib'],
+				}],
+				['OS == "linux"', {
+					'libraries': ['-lpthread'],
+				}]
+			],
+			"dependencies": [
+				"CPP-SystemRT-lib"
+			],
+			'sources': [
+				'test/configfile_test.cpp'
+			],
+		},
+		{
 			'target_name': 'CPP-SystemRT-lib',
 			'type': 'static_library',
 			'sources': [
@@ -184,6 +202,7 @@
 				'src/log-common.cpp',
 				'src/thread.cpp',
 				'src/socket.cpp',
+				'src/configfile.cpp',
 			],
 		},
 	],
