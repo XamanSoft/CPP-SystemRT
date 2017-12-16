@@ -1,8 +1,25 @@
 # CPP-SystemRT
 
-The aim of this project is to create a System Runtime library that support Threads, Daemons(linux)/Services(Windows), Log, etc.
+The aim of this project is to create a Multiplataform System Runtime Library for Windows and Linux in C++.
 
-## Daemon Example
+## Library Support
+
+* Daemon / Service
+* Config File (INI Format)
+* Object Oriented Threads
+* TCP/UDP Sockets
+* Named Pipes
+* System Logging
+
+### Comming Soon
+
+* Library Documentation (After final code revision)
+
+## Examples
+
+Examples can be found on [test folder](test).
+
+### Daemon Example
 
 ```cpp
 #include <CppSystemRT.hpp>
