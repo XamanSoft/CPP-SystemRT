@@ -80,12 +80,12 @@ bool ConfigFile::parse() {
 			skipWS();
 			inputChar = file.peek();
 			if (inputChar != '_' && !std::isalpha(inputChar)) { setError("invalid section name"); return false; }
-			section += parseName();
+			section += getName();
 			while ((inputChar = file.peek()) == '/') {
 				section += file.get();
 				inputChar = file.peek();
 				if (inputChar != '_' && !std::isalpha(inputChar)) { setError("invalid section name"); return false; }
-				section += parseName();
+				section += getName();
 			}
 			skipWS();
 			if (file.get() != ']') {
@@ -97,7 +97,7 @@ bool ConfigFile::parse() {
 		}
 		
 		if (inputChar == '_' || std::isalpha(inputChar)) { // key
-			std::string key = parseName();
+			std::string key = getName();
 			skipWS(false);
 
 			if (file.get() != '=') {
@@ -105,7 +105,7 @@ bool ConfigFile::parse() {
 				return false;
 			}
 
-			std::string value = parseValue();
+			std::string value = getValue();
 			if (section.empty())
 				keys[key] = value;
 			else
@@ -121,20 +121,20 @@ bool ConfigFile::parse() {
 	return true;
 }
 
-std::string ConfigFile::parseName() {
+std::string ConfigFile::getName() {
 	std::string name;
 	int inputChar = file.peek();
 
 	if (inputChar == '_' || std::isalpha(inputChar))
 		name += file.get();
 
-	while (file && std::isalnum(inputChar = file.peek()))
+	while (file.good() && (std::isalnum(inputChar = file.peek()) || inputChar == '_'))
 		name += file.get();
 	
 	return name;
 }
 
-std::string ConfigFile::parseValue() {
+std::string ConfigFile::getValue() {
 	std::string value;
 	
 	while (file.good() && file.peek() != '\n')

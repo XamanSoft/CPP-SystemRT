@@ -47,8 +47,8 @@ public:
 private:
 	void setError(std::string const& errStr);
 	bool parse();
-	std::string parseName();
-	std::string parseValue();
+	std::string getName();
+	std::string getValue();
 	void skipWS(bool skipNewLine = true);
 
 	int line;
