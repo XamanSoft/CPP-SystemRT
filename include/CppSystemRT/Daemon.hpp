@@ -1,5 +1,5 @@
-#ifndef _CPPFASTCGI_DAEMON_HPP
-#define _CPPFASTCGI_DAEMON_HPP
+#ifndef _CPPSYSTEMRT_DAEMON_HPP
+#define _CPPSYSTEMRT_DAEMON_HPP
 
 namespace CppSystemRT {
 	

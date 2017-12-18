@@ -1,5 +1,5 @@
-#ifndef _CPPFASTCGI_HPP
-#define _CPPFASTCGI_HPP
+#ifndef _CPPSYSTEMRT_HPP
+#define _CPPSYSTEMRT_HPP
 
 #include "CppSystemRT/stdafx.h"
 
