@@ -11,7 +11,7 @@ static SERVICE_STATUS_HANDLE g_StatusHandle = NULL;
 /// handle for a stop event
 static HANDLE                g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 
-thread_create_t threadCreate{nullptr};
+ThreadCreator* threadCreate{nullptr};
 
 #define SERVICE_NAME  _T("LoggerWindowsService")  
 
@@ -19,14 +19,14 @@ static VOID WINAPI ServiceDaemonMain(DWORD argc, LPTSTR *argv);
 static VOID WINAPI ServiceDaemonCtrlHandler(DWORD);
 static DWORD WINAPI ServiceDaemonWorkerThread(LPVOID lpParam);
 
-int exec(thread_create_t thread_create) {
+int exec(ThreadCreator* tc) {
 	SERVICE_TABLE_ENTRY ServiceDaemonTable[] =
 	{
 		{ SERVICE_NAME, (LPSERVICE_MAIN_FUNCTION)ServiceDaemonMain },
 		{ NULL, NULL }
 	};
 	
-	threadCreate = thread_create;
+	threadCreate = tc;
 
 	if (StartServiceCtrlDispatcher(ServiceDaemonTable) == FALSE)
 	{
@@ -127,7 +127,8 @@ VOID WINAPI ServiceDaemonCtrlHandler(DWORD CtrlCode)
 /// ServiceWorkerThread function starts writing the timestamp to a file every 3 seconds
 DWORD WINAPI ServiceDaemonWorkerThread(LPVOID lpParam)
 {
-	std::unique_ptr<Thread> worker(static_cast<thread_create_t>(lpParam)());
+	if (lpParam == nullptr) return ERROR_SUCCESS;
+	std::unique_ptr<Thread> worker(static_cast<ThreadCreator*>(lpParam)->create());
 
 	///  Checking if the services has issued a stop request
 	while (worker && (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0))

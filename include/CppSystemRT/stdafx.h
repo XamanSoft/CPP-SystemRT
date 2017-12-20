@@ -17,6 +17,7 @@
 #include <limits>
 #include <atomic>
 #include <regex>
+#include <tuple>
 #include <time.h>
 
 #ifdef _WIN32

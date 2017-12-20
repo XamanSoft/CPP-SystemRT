@@ -8,11 +8,11 @@ static int pid_fd{-1};
 static char *pid_file_name{NULL};
 static bool running{false};
 
-void process(thread_create_t thread_create);
+void process(ThreadCreator* tc);
 
 void _handleSignal(int sig);
 
-int exec(thread_create_t thread_create) {
+int exec(ThreadCreator* tc) {
 	// Process ID and Session ID
 	pid_t pid, sid;
 	int fd;
@@ -54,13 +54,14 @@ int exec(thread_create_t thread_create) {
 	stderr = fopen("/dev/null", "w+");
 
 	// calling process function
-	process(thread_create);
+	process(tc);
 
 	return EXIT_SUCCESS;
 }
 
-void process(thread_create_t thread_create) {
-	std::unique_ptr<Thread> worker(thread_create());
+void process(ThreadCreator* tc) {
+	if (tc == nullptr) return;
+	std::unique_ptr<Thread> worker(tc->create());
 
 	while (worker && running) {		
 		worker->run();
