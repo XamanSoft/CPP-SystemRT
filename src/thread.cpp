@@ -23,7 +23,7 @@ int Thread::exec(bool waitFinish) {
 }
 
 int Thread::wait() {
-	if (thread->joinable())
+	if (running && thread->joinable())
 	{
 		thread->join();
 	}
@@ -32,6 +32,8 @@ int Thread::wait() {
 }
 
 void Thread::exit(int code) {
+	if (!running) return;
+
 	retCode = code;
 	running = false;
 }

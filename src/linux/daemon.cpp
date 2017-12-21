@@ -65,7 +65,7 @@ void process(ThreadCreator* tc) {
 
 	while (worker && running) {		
 		worker->run();
-		sleep(1);
+		usleep(1000);
 	}
 }
 
