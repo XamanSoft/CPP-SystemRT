@@ -8,7 +8,7 @@ int main(int argc, const char* argv[]) {
 	NamedPipe test;
 	
 	if (argc > 1 && std::string(argv[1]) == "server") {
-		if (test.bind("testpipe"))
+		if (test.open("testpipe", {{"bind", "true"}}))
 		{
 			int count = test.read(buff, sizeof(buff));
 			std::cout << "Message: \n";

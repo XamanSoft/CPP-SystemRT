@@ -36,26 +36,24 @@ typedef int (*function_call_t)(int sockfd, const struct sockaddr *addr, socklen_
 #endif
 
 template <function_call_t function>
-inline bool _resolve(int& sockfd, std::string const& host, std::string const& port, Socket::Protocol proto) {
+inline bool _resolve(int& sockfd, std::string const& host, std::map<std::string,std::string> const& accessInfo) {
 	addrinfo hints;
 	addrinfo *result, *rp;
 	
 	::memset(&hints, 0, sizeof(addrinfo));
 	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
-	hints.ai_socktype = proto == Socket::TCP ? SOCK_STREAM : SOCK_DGRAM; /* Datagram socket */
+	hints.ai_socktype = (accessInfo.count("proto") && accessInfo.at("proto") == "udp") ? SOCK_DGRAM : SOCK_STREAM; /* Datagram socket */
 	hints.ai_flags = 0;
-	hints.ai_protocol = proto == Socket::TCP ? IPPROTO_TCP : IPPROTO_UDP;
+	hints.ai_protocol = (accessInfo.count("proto") && accessInfo.at("proto") == "udp") ? IPPROTO_UDP : IPPROTO_TCP;
 	int err= 0;
-	if ((err=::getaddrinfo(host.c_str(), port.c_str(), &hints, &result)) != 0) {
-		std::cout << "aqui " << err << std::endl;
+
+	if ((err=::getaddrinfo(host.c_str(), (accessInfo.count("port") ? accessInfo.at("port").c_str() : "http"), &hints, &result)) != 0) {
 		return false;
 	}
-	
+	char errmsg[256];
+    memset(errmsg, 0, 256);
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
 		sockfd = ::socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-		
-		if (sockfd == SOCKET_ERROR)
-			continue;
 
 		if (function(sockfd, rp->ai_addr, rp->ai_addrlen) != SOCKET_ERROR)
 			break;
@@ -68,8 +66,8 @@ inline bool _resolve(int& sockfd, std::string const& host, std::string const& po
 	}
 	
 	::freeaddrinfo(result);
-	
-	return true;
+
+	return sockfd != INVALID_SOCKET;
 }
 
 }
@@ -82,21 +80,21 @@ Socket::Socket(int sockfd): is_open(false), sockfd(sockfd) {
 	WSOCK;
 }
 
-Socket::Socket(std::string const& host, std::string const& port, Protocol proto): is_open(false) {
+Socket::Socket(std::string const& name, std::map<std::string,std::string> const& accessInfo): is_open(false) {
 	WSOCK;
-	is_open=open(host, port, proto);
+	is_open=open(name, accessInfo);
 }
 
 Socket::~Socket() {
 	close();
 }
 
-bool Socket::open(std::string const& host, std::string const& port, Protocol proto) {
-	return is_open = _resolve<::connect>(sockfd, host, port, proto);
-}
+bool Socket::open(std::string const& name, std::map<std::string,std::string> const& accessInfo) {
+	if (accessInfo.count("bind") && accessInfo.at("bind") == "true") {
+		return is_open = (_resolve<::bind>(sockfd, name, accessInfo) && ::listen(sockfd, SOMAXCONN) != SOCKET_ERROR);
+	}
 
-bool Socket::bind(std::string const& host, std::string const& port, Protocol proto) {
-	return is_open = (_resolve<::bind>(sockfd, host, port, proto) && ::listen(sockfd, SOMAXCONN) != SOCKET_ERROR);
+	return is_open = _resolve<::connect>(sockfd, name, accessInfo);
 }
 
 Socket* Socket::accept() {
@@ -105,19 +103,19 @@ Socket* Socket::accept() {
 	return income_sock != INVALID_SOCKET ? (new Socket(income_sock)) : nullptr;
 }
 
-bool Socket::isOpen() {
+bool Socket::isOpen() const {
 	return is_open;
 }
 
-int Socket::read(char* s, std::streamsize n) {
+int Socket::read(char* s, unsigned int n) {
 	return ::recv(sockfd, s, n, 0);
 }
 
-int Socket::write(const char* s, std::streamsize n) {
+int Socket::write(const char* s, unsigned int n) const {
 	return ::send(sockfd, s, n, 0);
 }
 
-void Socket::close() {
+void Socket::close() const {
 #ifdef _WIN32
 	::closesocket(sockfd);
 #else

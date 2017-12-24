@@ -3,22 +3,19 @@
 
 namespace CppSystemRT {
 	
-class Socket {
+class Socket: public File {
 public:
-	enum Protocol { UDP, TCP };
-	
 	Socket();
-	Socket(std::string const& host, std::string const& port, Protocol proto = TCP); // client mode
+	Socket(std::string const& name, std::map<std::string,std::string> const& accessInfo = {});
 
 	virtual ~Socket();
 	
-	bool open(std::string const& host, std::string const& port, Protocol proto = TCP);
-	bool bind(std::string const& host, std::string const& port, Protocol proto = TCP);
+	bool open(std::string const& name, std::map<std::string,std::string> const& accessInfo = {});
 	Socket* accept();
-	bool isOpen();
-	int read(char* s, std::streamsize n);
-	int write(const char* s, std::streamsize n);
-	void close();
+	bool isOpen() const;
+	int read(char* s, unsigned int n);
+	int write(const char* s, unsigned int n) const;
+	void close() const;
 
 private:
 	Socket(int sockfd); // accept constructor

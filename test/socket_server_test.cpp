@@ -7,7 +7,7 @@ int main() {
 	const char response[] = "HTTP/1.1 200 OK\nContent-Length: 44\nContent-Type: text/html\nConnection: Closed\n\n<html><body><h1>It works!</h1></body></html>";
 	Socket test;
 	
-	if (test.bind("localhost", "3000"))
+	if (test.open("localhost", {{"port", "3000"}, {"bind", "true"}}))
 	{
 		Socket* sock = test.accept();
 

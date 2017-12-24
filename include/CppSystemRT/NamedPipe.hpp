@@ -3,25 +3,24 @@
 
 namespace CppSystemRT {
 	
-class NamedPipe {
+class NamedPipe: public File {
 public:
 	NamedPipe();
-	NamedPipe(std::string const& pipeName);
+	NamedPipe(std::string const& pipeName, std::map<std::string,std::string> const& accessInfo = {});
 
 	virtual ~NamedPipe();
 	
-	bool open(std::string const& pipeName);
-	bool bind(std::string const& pipeName);
-	bool isOpen();
-	int read(char* s, std::streamsize n);
-	int write(const char* s, std::streamsize n);
-	void close();
+	bool open(std::string const& pipeName, std::map<std::string,std::string> const& accessInfo = {});
+	bool isOpen() const;
+	int read(char* s, unsigned int n);
+	int write(const char* s, unsigned int n) const;
+	void close() const;
 
 private:
-	bool is_open;
-	bool is_bind;
-	std::string pName;
-	HANDLE pipefd;
+	mutable bool is_open;
+	mutable bool is_bind;
+	mutable std::string pName;
+	mutable HANDLE pipefd;
 };
 
 }

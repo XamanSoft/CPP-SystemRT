@@ -8,52 +8,43 @@ NamedPipe::NamedPipe(): is_open(false), is_bind(false), pipefd(0) {
 	
 }
 
-NamedPipe::NamedPipe(std::string const& pipeName): is_open(false), is_bind(false), pipefd(0) {
-	open(pipeName);
+NamedPipe::NamedPipe(std::string const& pipeName, std::map<std::string,std::string> const& accessInfo): is_open(false), is_bind(false), pipefd(0) {
+	open(pipeName, accessInfo);
 }
 
 NamedPipe::~NamedPipe() {
 	close();
 }
 
-bool NamedPipe::open(std::string const& pipeName) {
+bool NamedPipe::open(std::string const& pipeName, std::map<std::string,std::string> const& accessInfo) {
 	pName = pipeName;
 	
 	if (pipeName.find("/") != 0)
 		pName = std::string("/tmp/") + pipeName;
+
+	if (accessInfo.count("bind") && accessInfo.at("bind") == "true") {
+		/* create the FIFO (named pipe) */
+		is_bind = mkfifo(pName.c_str(), 0666) == 0;
+	}
 
     pipefd = ::open(pName.c_str(), O_RDWR);
 
 	return is_open = pipefd > -1;
 }
 
-bool NamedPipe::bind(std::string const& pipeName) {
-	pName = pipeName;
-	
-	if (pipeName.find("/") != 0)
-		pName = std::string("/tmp/") + pipeName;
-	
-	/* create the FIFO (named pipe) */
-    mkfifo(pName.c_str(), 0666);
-	
-	pipefd = ::open(pName.c_str(), O_RDWR);
-	
-	return is_bind = is_open = pipefd > -1;
-}
-
-bool NamedPipe::isOpen() {
+bool NamedPipe::isOpen() const {
 	return is_open;
 }
 
-int NamedPipe::read(char* s, std::streamsize n) {
+int NamedPipe::read(char* s, unsigned int n) {
 	return ::read(pipefd, s, n);
 }
 
-int NamedPipe::write(const char* s, std::streamsize n) {
+int NamedPipe::write(const char* s, unsigned int n) const {
 	return ::write(pipefd, s, n);
 }
 
-void NamedPipe::close() {
+void NamedPipe::close() const {
 	::fdatasync(pipefd);
 	::close(pipefd);
 	if (is_bind)

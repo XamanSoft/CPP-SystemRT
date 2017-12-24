@@ -7,7 +7,7 @@ int main() {
 	const char request[] = "GET /index.html HTTP/1.1\nHost: google.com\n\n";
 	Socket test;
 	
-	if (test.open("google.com", "http"))
+	if (test.open("google.com", {{"port", "http"}}))
 	{
 		std::cout << "Socket open:\n";
 		test.write(request, sizeof(request));
