@@ -9,12 +9,12 @@ public:
 	Error(unsigned int _code): _code(_code) { }
 	virtual ~Error() {}
 
-	unsigned int code() { return _code; }
-	char const* what();
+	unsigned int code() const noexcept { return _code; }
+	char const* what() const noexcept;
 
 private:
 	unsigned int _code;
-	std::string msg;
+	mutable std::string msg;
 };
 
 }
