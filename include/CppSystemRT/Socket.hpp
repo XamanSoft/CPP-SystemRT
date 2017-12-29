@@ -16,6 +16,8 @@ public:
 	int read(char* s, unsigned int n);
 	int write(const char* s, unsigned int n) const;
 	void close() const;
+	
+	unsigned int available() const;
 
 private:
 	Socket(int sockfd); // accept constructor

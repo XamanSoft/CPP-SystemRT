@@ -115,6 +115,18 @@ int Socket::write(const char* s, unsigned int n) const {
 	return ::send(sockfd, s, n, 0);
 }
 
+unsigned int Socket::available() const {
+	unsigned long avail = 0;
+#ifdef _WIN32
+	if (::ioctlsocket(sockfd, FIONREAD, &avail) != NO_ERROR)
+		return 0;
+#else
+	if (!::ioctl(sockfd, FIONREAD, &avail))
+		return 0;
+#endif
+	return avail;
+}
+
 void Socket::close() const {
 #ifdef _WIN32
 	::closesocket(sockfd);
