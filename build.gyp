@@ -200,6 +200,7 @@
 				'src/<(OS)/log.cpp',
 				'src/<(OS)/namedpipe.cpp',
 				'src/<(OS)/error.cpp',
+				'src/<(OS)/sharedlib.cpp',
 				'src/log-common.cpp',
 				'src/thread.cpp',
 				'src/socket.cpp',

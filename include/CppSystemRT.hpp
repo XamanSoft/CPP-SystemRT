@@ -10,6 +10,7 @@
 #include "CppSystemRT/Thread.hpp"
 #include "CppSystemRT/Socket.hpp"
 #include "CppSystemRT/NamedPipe.hpp"
+#include "CppSystemRT/SharedLib.hpp"
 #include "CppSystemRT/Daemon.hpp"
 
 #endif
