@@ -13,6 +13,7 @@ public:
 	bool open(std::string const& pipeName, std::map<std::string,std::string> const& accessInfo = {});
 	bool isOpen() const;
 	int read(char* s, unsigned int n);
+	unsigned int available() const;
 	int write(const char* s, unsigned int n) const;
 	void close() const;
 

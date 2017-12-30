@@ -107,6 +107,15 @@ int NamedPipe::read(char* s, unsigned int n) {
 	return cbBytesRead;
 }
 
+unsigned int NamedPipe::available() const {
+	DWORD avail = 0;
+
+	if (!PeekNamedPipe(pipefd, NULL, 0, NULL, &avail, NULL))
+		return 0;
+
+	return avail;
+}
+
 int NamedPipe::write(const char* s, unsigned int n) const {
 	DWORD cbWritten = 0;
 	bool fSuccess = false;

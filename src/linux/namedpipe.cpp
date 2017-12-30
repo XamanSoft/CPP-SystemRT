@@ -40,6 +40,15 @@ int NamedPipe::read(char* s, unsigned int n) {
 	return ::read(pipefd, s, n);
 }
 
+unsigned int NamedPipe::available() const {
+	unsigned long avail = 0;
+
+	if (!::ioctl(pipefd, FIONREAD, &avail))
+		return 0;
+
+	return avail;
+}
+
 int NamedPipe::write(const char* s, unsigned int n) const {
 	return ::write(pipefd, s, n);
 }
