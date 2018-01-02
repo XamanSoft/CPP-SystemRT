@@ -121,7 +121,7 @@ unsigned int Socket::available() const {
 	if (::ioctlsocket(sockfd, FIONREAD, &avail) != NO_ERROR)
 		return 0;
 #else
-	if (!::ioctl(sockfd, FIONREAD, &avail))
+	if (::ioctl(sockfd, FIONREAD, &avail) != 0)
 		return 0;
 #endif
 	return avail;
