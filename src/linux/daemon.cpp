@@ -54,6 +54,7 @@ int exec(ThreadCreator* tc) {
 	stderr = fopen("/dev/null", "w+");
 
 	// calling process function
+	running = true;
 	process(tc);
 
 	return EXIT_SUCCESS;
