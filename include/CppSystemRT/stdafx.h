@@ -23,6 +23,7 @@
 
 #ifdef _WIN32
 
+#include <direct.h>
 #include <tchar.h>
 #include <Windows.h>
 #include <winsock2.h>

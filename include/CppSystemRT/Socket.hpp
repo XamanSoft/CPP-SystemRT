@@ -11,6 +11,7 @@ public:
 	virtual ~Socket();
 	
 	bool open(std::string const& name, std::map<std::string,std::string> const& accessInfo = {});
+	bool select();
 	Socket* accept();
 	bool isOpen() const;
 	int read(char* s, unsigned int n);

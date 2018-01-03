@@ -36,6 +36,14 @@ int exec(ThreadCreator* tc) {
 	return 0;
 }
 
+bool config(std::string const& param, std::string const& value) {
+	return true;
+}
+
+bool stop() {
+	return false;
+}
+
 /// The entry point for a service.
 VOID WINAPI ServiceDaemonMain(DWORD argc, LPTSTR *argv)
 {
@@ -58,6 +66,7 @@ VOID WINAPI ServiceDaemonMain(DWORD argc, LPTSTR *argv)
 
 	/// Creating the stop event
 	g_ServiceStopEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	
 	/// if SetServiceStatus returned error
 	if (g_ServiceStopEvent == NULL)
 	{
@@ -109,7 +118,7 @@ VOID WINAPI ServiceDaemonCtrlHandler(DWORD CtrlCode)
 			g_ServiceStatus.dwWin32ExitCode = 0;
 			g_ServiceStatus.dwCheckPoint = 4;
 			SetServiceStatus(g_StatusHandle, &g_ServiceStatus);
-
+			
 			/// Signalling the worker thread to shut down
 			SetEvent(g_ServiceStopEvent);
 

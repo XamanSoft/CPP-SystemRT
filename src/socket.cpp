@@ -97,6 +97,18 @@ bool Socket::open(std::string const& name, std::map<std::string,std::string> con
 	return is_open = _resolve<::connect>(sockfd, name, accessInfo);
 }
 
+bool Socket::select() {
+	fd_set read_fds;
+	FD_ZERO(&read_fds);
+	FD_SET(sockfd, &read_fds);
+	timeval tv{0, 1};
+
+	if (::select(sockfd + 1, &read_fds, nullptr, nullptr, &tv) < 1)
+		return false;
+	
+	return FD_ISSET(sockfd, &read_fds);
+}
+
 Socket* Socket::accept() {
 	int income_sock = ::accept(sockfd, NULL, NULL);
 	

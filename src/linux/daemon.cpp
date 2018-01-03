@@ -146,7 +146,6 @@ void _handleSignal(int sig)
 			running = false;
 			/* Reset signal handling to default behavior */
 			signal(SIGINT, SIG_DFL);
-			exit(EXIT_SUCCESS);
 		} 
 		break;
 
