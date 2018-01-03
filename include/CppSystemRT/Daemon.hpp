@@ -60,6 +60,8 @@ int exec(ThreadCreator* tc);
 
 template <typename Tp, typename... params>
 inline int exec(params... param) { std::unique_ptr<ThreadCreator> tc(new ThreadCreatorTp<Tp,params...>(param...)); return exec(tc.get()); }
+bool config(std::string const& param, std::string const& value);
+bool stop();
 
 }
 
