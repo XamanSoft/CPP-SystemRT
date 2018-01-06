@@ -202,6 +202,7 @@
 				'src/<(OS)/error.cpp',
 				'src/<(OS)/sharedlib.cpp',
 				'src/log-common.cpp',
+				'src/filestreambuf.cpp',
 				'src/thread.cpp',
 				'src/socket.cpp',
 				'src/configfile.cpp',

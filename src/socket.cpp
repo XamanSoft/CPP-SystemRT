@@ -5,12 +5,18 @@ namespace CppSystemRT {
 namespace {
 	
 #ifdef _WIN32
+
+#define ioctl ioctlsocket
+#define __errnum WSAGetLastError()
+
 template <BYTE major, BYTE minor>
 class WinSock {
 	WSADATA wsaData;
 
 	WinSock() {
-		if (WSAStartup(MAKEWORD(major, minor), &wsaData) != 0) {
+		int err = 0;
+		if (err = WSAStartup(MAKEWORD(major, minor), &wsaData) != 0) {
+			throw Error(err);
 			return;
 		}
 	}
@@ -31,6 +37,8 @@ typedef int (*function_call_t)(_In_ SOCKET sockfd, _In_ const struct sockaddr *a
 #define WSOCK
 typedef int (*function_call_t)(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 
+#define __errnum errno
+#define NO_ERROR 0
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
 #endif
@@ -48,13 +56,14 @@ inline bool _resolve(int& sockfd, std::string const& host, std::map<std::string,
 	int err= 0;
 
 	if ((err=::getaddrinfo(host.c_str(), (accessInfo.count("port") ? accessInfo.at("port").c_str() : "http"), &hints, &result)) != 0) {
+		throw Error(err);
 		return false;
 	}
 	char errmsg[256];
     memset(errmsg, 0, 256);
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
 		sockfd = ::socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-
+		
 		if (function(sockfd, rp->ai_addr, rp->ai_addrlen) != SOCKET_ERROR)
 			break;
 
@@ -66,8 +75,13 @@ inline bool _resolve(int& sockfd, std::string const& host, std::map<std::string,
 	}
 	
 	::freeaddrinfo(result);
+	
+	if (sockfd == INVALID_SOCKET) {
+		throw Error(__errnum);
+		return false;
+	}
 
-	return sockfd != INVALID_SOCKET;
+	return true;
 }
 
 }
@@ -91,7 +105,13 @@ Socket::~Socket() {
 
 bool Socket::open(std::string const& name, std::map<std::string,std::string> const& accessInfo) {
 	if (accessInfo.count("bind") && accessInfo.at("bind") == "true") {
-		return is_open = (_resolve<::bind>(sockfd, name, accessInfo) && ::listen(sockfd, SOMAXCONN) != SOCKET_ERROR);
+		if (is_open = (_resolve<::bind>(sockfd, name, accessInfo))) {
+			if (::listen(sockfd, SOMAXCONN) != SOCKET_ERROR)
+				return true;
+			
+			throw Error(__errnum);
+			return false;
+		}
 	}
 
 	return is_open = _resolve<::connect>(sockfd, name, accessInfo);
@@ -102,9 +122,14 @@ bool Socket::select() {
 	FD_ZERO(&read_fds);
 	FD_SET(sockfd, &read_fds);
 	timeval tv{0, 1};
+	int ret = 0;
 
-	if (::select(sockfd + 1, &read_fds, nullptr, nullptr, &tv) < 1)
+	if ((ret = ::select(sockfd + 1, &read_fds, nullptr, nullptr, &tv)) < 1) {
+		if (ret < 0)
+			throw Error(__errnum);
+
 		return false;
+	}
 	
 	return FD_ISSET(sockfd, &read_fds);
 }
@@ -112,7 +137,12 @@ bool Socket::select() {
 Socket* Socket::accept() {
 	int income_sock = ::accept(sockfd, NULL, NULL);
 	
-	return income_sock != INVALID_SOCKET ? (new Socket(income_sock)) : nullptr;
+	if (income_sock == INVALID_SOCKET) {
+		throw Error(__errnum);
+		return nullptr;
+	}
+	
+	return new Socket(income_sock);
 }
 
 bool Socket::isOpen() const {
@@ -120,22 +150,35 @@ bool Socket::isOpen() const {
 }
 
 int Socket::read(char* s, unsigned int n) {
-	return ::recv(sockfd, s, n, 0);
+	int ret = ::recv(sockfd, s, n, 0);
+
+	if (ret == SOCKET_ERROR)
+	{
+		throw Error(__errnum);
+	}
+
+	return ret;
 }
 
 int Socket::write(const char* s, unsigned int n) const {
-	return ::send(sockfd, s, n, 0);
+	int ret = ::send(sockfd, s, n, 0);
+
+	if (ret == SOCKET_ERROR)
+	{
+		throw Error(__errnum);
+	}
+
+	return ret;
 }
 
 unsigned int Socket::available() const {
 	unsigned long avail = 0;
-#ifdef _WIN32
-	if (::ioctlsocket(sockfd, FIONREAD, &avail) != NO_ERROR)
+
+	if (::ioctl(sockfd, FIONREAD, &avail) != NO_ERROR) {
+		throw Error(__errnum);
 		return 0;
-#else
-	if (::ioctl(sockfd, FIONREAD, &avail) != 0)
-		return 0;
-#endif
+	}
+
 	return avail;
 }
 
