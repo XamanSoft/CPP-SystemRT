@@ -5,7 +5,7 @@
 
 #include "CppSystemRT/Error.hpp"
 #include "CppSystemRT/File.hpp"
-#include "CppSystemRT/FileStreamBuf.hpp"
+#include "CppSystemRT/FileStream.hpp"
 #include "CppSystemRT/ConfigFile.hpp"
 #include "CppSystemRT/Log.hpp"
 #include "CppSystemRT/Thread.hpp"
