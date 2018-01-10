@@ -2,17 +2,22 @@
 
 #ifdef _WIN32
 #define getcwd		_getcwd
-#define PATH_MAX	_MAX_PATH
 #endif
+
+namespace CppSystemRT {
+namespace Path {
 
 namespace {
 
 class PathParser {
 public:
 	PathParser() {
-		char cwd[PATH_MAX];
+		char cwd[Path::MAX_SZ];
 		if (getcwd(cwd, sizeof(cwd)) != NULL)
-			vars["cwd"] = cwd;
+			vars["CWD"] = cwd;
+		
+		vars["EXE"] = Path::EXE_EXT;
+		vars["SOBJ"] = Path::SOBJ_EXT;
 	}
 	
 	inline std::string var(std::string const& name, std::string const& value = std::string()) {
@@ -66,14 +71,11 @@ PathParser pp_istance;
 	
 }
 
-namespace CppSystemRT {
-namespace Path {
-
-std::string var(std::string const& name, std::string const& value) {
+std::string Var(std::string const& name, std::string const& value) {
 	return pp_istance.var(name, value);
 }
 
-std::string	parse(std::string const& path) {
+std::string	Parse(std::string const& path) {
 	return pp_istance.parse(path);
 }
 
