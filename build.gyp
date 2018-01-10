@@ -13,6 +13,9 @@
 		],
 	},
 	'target_defaults': {
+		'target_conditions': [
+		  ['_type=="shared_library" or _type=="static_library"', {'cflags': ['-fPIC'], 'ldflags': ['-fPIC']}],
+		],
 		"include_dirs" : [ 
 			'lib/CppMetadata/include',
 			'include'
