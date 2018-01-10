@@ -12,6 +12,7 @@
 #include "CppSystemRT/Socket.hpp"
 #include "CppSystemRT/NamedPipe.hpp"
 #include "CppSystemRT/SharedLib.hpp"
+#include "CppSystemRT/Path.hpp"
 #include "CppSystemRT/Daemon.hpp"
 
 #endif

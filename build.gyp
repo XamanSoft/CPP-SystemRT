@@ -205,6 +205,7 @@
 				'src/filestream.cpp',
 				'src/thread.cpp',
 				'src/socket.cpp',
+				'src/path.cpp',
 				'src/configfile.cpp',
 			],
 		},
