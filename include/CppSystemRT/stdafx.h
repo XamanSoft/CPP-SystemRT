@@ -48,6 +48,7 @@
 #include <signal.h>
 #include <syslog.h>
 #include <string.h>
+#include <limits.h>
 
 #endif
 

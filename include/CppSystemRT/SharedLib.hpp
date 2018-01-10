@@ -13,7 +13,7 @@ public:
 	virtual ~SharedLib();
 	
 	template <typename Tp>
-	inline Tp symbol(std::string const& name) { return static_cast<Tp>(sym(name)); }
+	inline Tp symbol(std::string const& name) { return reinterpret_cast<Tp>(sym(name)); }
 
 private:
 	HMODULE module;
