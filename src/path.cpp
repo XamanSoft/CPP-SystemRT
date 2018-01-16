@@ -2,6 +2,11 @@
 
 #ifdef _WIN32
 #define getcwd		_getcwd
+#define PATH_SEP	'\\'
+#define GetExecPath(path, pathsz) ::GetModuleFileName(GetModuleHandle(NULL), path, pathsz)
+#else
+#define PATH_SEP	'/'
+#define GetExecPath(path, pathsz) ::readlink("/proc/self/exe", path, pathsz)
 #endif
 
 namespace CppSystemRT {
@@ -12,10 +17,19 @@ namespace {
 class PathParser {
 public:
 	PathParser() {
-		char cwd[Path::MAX_SZ];
-		if (getcwd(cwd, sizeof(cwd)) != NULL)
-			vars["CWD"] = cwd;
-		
+		char path[Path::MAX_SZ]{0};
+		if (getcwd(path, sizeof(path)) != NULL)
+			vars["CWD"] = path;
+
+		if (GetExecPath(path, Path::MAX_SZ) > 0) {
+			vars["EWD"] = path;
+			vars["EWD"] = vars["EWD"].substr(0, vars["EWD"].find_last_of(PATH_SEP));
+		}
+#ifdef _WIN32
+		vars["SYSNAME"] = "win";
+#else
+		vars["SYSNAME"] = "linux";
+#endif
 		vars["EXE"] = Path::EXE_EXT;
 		vars["SOBJ"] = Path::SOBJ_EXT;
 	}

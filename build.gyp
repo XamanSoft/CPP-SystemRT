@@ -196,6 +196,16 @@
 			],
 		},
 		{
+			'target_name': 'args-test',
+			'type': 'executable',
+			"dependencies": [
+				"CPP-SystemRT-lib"
+			],
+			'sources': [
+				'test/args_test.cpp'
+			],
+		},
+		{
 			'target_name': 'CPP-SystemRT-lib',
 			'type': 'static_library',
 			'sources': [
@@ -207,6 +217,7 @@
 				'src/log-common.cpp',
 				'src/filestream.cpp',
 				'src/thread.cpp',
+				'src/options.cpp',
 				'src/socket.cpp',
 				'src/path.cpp',
 				'src/configfile.cpp',

@@ -14,6 +14,7 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <functional>
 #include <cctype>
 #include <limits>
 #include <atomic>

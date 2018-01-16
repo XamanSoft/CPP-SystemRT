@@ -4,6 +4,7 @@
 #include "CppSystemRT/stdafx.h"
 
 #include "CppSystemRT/Error.hpp"
+#include "CppSystemRT/Options.hpp"
 #include "CppSystemRT/File.hpp"
 #include "CppSystemRT/FileStream.hpp"
 #include "CppSystemRT/ConfigFile.hpp"

@@ -45,45 +45,29 @@ private:
 	File& file;
 };
 
-class IFileStream
-    : public std::istream
+template <typename StreamType, typename StreamBuf>
+class FileStream
+    : public StreamType
 {
 public:
-    IFileStream(File& file)
-        : std::istream(new IFileStreamBuf(file))
+    FileStream(File& file)
+        : StreamType(new StreamBuf(file))
     {
-        exceptions(std::ios_base::badbit);
+        StreamType::exceptions(std::ios_base::badbit);
     }
-    explicit IFileStream(File* file)
-        : std::istream(new IFileStreamBuf(*file))
+    explicit FileStream(File* file)
+        : StreamType(new StreamBuf(*file))
     {
-        exceptions(std::ios_base::badbit);
+        StreamType::exceptions(std::ios_base::badbit);
     }
-    virtual ~IFileStream()
+    virtual ~FileStream()
     {
-        delete rdbuf();
+        delete StreamType::rdbuf();
     }
 };
 
-class OFileStream
-    : public std::ostream
-{
-public:
-    OFileStream(File& file)
-        : std::ostream(new OFileStreamBuf(file))
-    {
-        exceptions(std::ios_base::badbit);
-    }
-    explicit OFileStream(File* file)
-        : std::ostream(new OFileStreamBuf(*file))
-    {
-        exceptions(std::ios_base::badbit);
-    }
-    virtual ~OFileStream()
-    {
-        delete rdbuf();
-    }
-};
+typedef FileStream<std::istream, IFileStreamBuf> IFileStream;
+typedef FileStream<std::ostream, OFileStreamBuf> OFileStream;
 
 }
 
