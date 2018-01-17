@@ -4,7 +4,7 @@
 namespace CppSystemRT {
 	
 namespace Options {
-	void Parse(int const& argc, char** argv, std::function<void(std::string const&, std::string const&)> f_arg);
+	void Parse(int const& argc, char** argv, std::function<void(std::string const&, std::function<std::string()>)> f_arg);
 };
 
 }

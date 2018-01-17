@@ -2,7 +2,7 @@
 
 namespace CppSystemRT {
 	
-void Options::Parse(int const& argc, char** argv, std::function<void(std::string const&, std::string const&)> f_arg) {
+void Options::Parse(int const& argc, char** argv, std::function<void(std::string const&, std::function<std::string()>)> f_arg) {
 	int current_argc = 0;
 
 	while (current_argc < argc) {
@@ -26,17 +26,20 @@ void Options::Parse(int const& argc, char** argv, std::function<void(std::string
 			}
 		} else
 			current_argc--;
+		
+		f_arg(option, [value, argc, argv, &current_argc] () -> std::string {
+			if (!value.empty())
+				return value;
 
-		if (value.empty() && (current_argc < argc)) {
-			char* c = argv[current_argc];
-			if (*c != '-') {
-				value = c;
-				current_argc++;
+			if (value.empty() && (current_argc < argc)) {
+				char* c = argv[current_argc];
+				if (*c != '-') {
+					current_argc++;
+					return c;
+				}
 			}
-		}
-
-		if (!option.empty() || !value.empty())
-			f_arg(option, value);
+			return std::string();
+		});
 	}
 }
 
